@@ -22,16 +22,17 @@ Invoke this skill when you want to:
 
 ## Installation
 
-The skill is a directory (`hbs-case-writer/`) containing `SKILL.md` plus supporting scripts, references, and assets. To install into another Claude Code project, copy the whole directory into that project's skills folder:
+The skill is a directory (`hbs-case-writer/`) containing `SKILL.md` plus supporting scripts, references, assets, and a paired agent. To install into another Claude Code project, copy the whole directory into that project's skills folder:
 
 ```bash
 cp -r hbs-case-writer/ <project>/.claude/skills/
 ```
 
-For the review-and-revise loop to work, also copy the paired agent:
+For the review-and-revise loop to work, also copy the paired `case-reviewer` agent into the project's agents folder (Claude Code discovers agents under `.claude/agents/`, not inside the skill):
 
 ```bash
-cp .claude/agents/case-reviewer.md <project>/.claude/agents/
+mkdir -p <project>/.claude/agents/
+cp hbs-case-writer/agents/case-reviewer.md <project>/.claude/agents/
 ```
 
 ## Usage
@@ -56,12 +57,16 @@ hbs-case-writer/
 │   ├── hbs-patterns.md          # Detailed patterns from real HBS cases
 │   ├── financial-data-sources.md # Where to find financial data
 │   └── case-review-rubric.md    # Scoring rubric for the case-reviewer agent
-└── assets/
-    ├── case-template.md         # Ready-to-use case (Markdown) template
-    └── slide-template.tex       # Beamer teaching-deck template (no-dependency theme)
+├── assets/
+│   ├── case-template.md         # Ready-to-use case (Markdown) template
+│   └── slide-template.tex       # Beamer teaching-deck template (no-dependency theme)
+├── agents/
+│   └── case-reviewer.md         # Paired critic agent (install under .claude/agents/)
+└── examples/
+    └── spacex-ipo/              # Sample slide deck (PDF + tex) with figures
 ```
 
-A paired critic agent lives outside the skill, at `.claude/agents/case-reviewer.md`.
+The `case-reviewer` agent ships inside the skill folder for distribution, but Claude Code only discovers agents under `.claude/agents/`. Copy it there during installation (see above). It is a critic only — it never edits the case.
 
 ## Output
 
