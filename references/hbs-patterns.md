@@ -15,6 +15,8 @@ Start the case with the protagonist at the moment of decision:
 - Clear decision statement
 - Stakes implied
 
+**Decision depth.** Not all decisions make equally good cases. A protagonist choosing a price target with a segment DCF behind it generates more analytical texture than a retail investor deciding whether to lock in a gain. Match the decision's analytical demands to the protagonist's role — favor decisions the reader can recompute (price target, buy/hold/sell, underwrite, allocate) over purely behavioral calls.
+
 ### The Question Hook
 Open with a question the reader will grapple with:
 
@@ -106,6 +108,28 @@ January 25, 2021    —  Melvin Capital covers short position
 
 Source: Company filings, news reports
 ```
+
+### Valuation-Framework Exhibits
+For a valuation or buy/sell/hold case, expect to carry framework exhibits — they present the *apparatus* the reader will use, not the conclusion:
+
+- **Segment valuation build** — one row per segment: base-year revenue, terminal revenue, terminal margin, present value; plus net cash. Sum to an equity value and per-share figure.
+- **"What must the buyer believe" lever table** — "To justify the $X price, this lever must move from base to Y," one row per lever, with each lever's evidence range beside it (so the reader sees which assumption the price is actually betting on).
+- **Estimate triangulation** — fundamental (Morningstar/Damodaran-style), secondary-market/private-round, precedent, prediction-market, offer price, and trading price, in one table, so the reader sees where the market sits relative to fundamental value.
+- **Physical-unit translation** (when powerful) — implied revenue restated as launches/day, subscribers, GW of compute, beside today's actual figure. This makes abstract multiples concrete for students.
+
+Example (illustrative, SpaceX IPO 2026):
+```
+Exhibit: What $1.77T Must Believe (one lever at a time, others at base)
+
+Lever                       Base     Implied by $1.77T   Assessment
+Starlink terminal margin    60%      137%                no feasible value
+xAI 2036 revenue            $160B    $640B               above supported range
+Launch 2036 revenue         $40B     $266B               above supported range
+Discount rate               8.25%    6.86%               inside estimation error
+
+Source: segment build calibrated to published valuations (Damodaran, ARK, Morningstar)
+```
+These are framework exhibits: they let the reader re-derive a value range and locate the single load-bearing assumption, rather than handing over a headline multiple.
 
 ## Teaching Note Patterns
 

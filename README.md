@@ -84,6 +84,7 @@ The case is authored in Markdown as the single source of truth, then rendered in
 Every drafted case goes through a review pass before it is final:
 
 - The `case-reviewer` agent critiques the case and verifies facts/references against primary sources via web search
+- It also checks **decision-relevant coverage**: every material segment from the primary filing appears, valuation cases carry a real analytical framework (build/comps/lever/sensitivity, not just headline multiples), and use-of-proceeds, TAM, key-person pay, and share-count basis are faithfully represented
 - It produces a scored report (start at 100, deductions per `case-review-rubric.md`) and a required-revisions list
 - The writer applies the fixes; max two review-revise rounds before escalating to the user
 - Separation of powers: **the reviewer only critiques — it never edits the case**

@@ -22,6 +22,10 @@
 
 [What events led to this moment? Present facts and data, not analysis.]
 
+## Analysis Framework
+
+[The apparatus the reader needs to reach a view — not the answer. For a valuation/decision case: a segment valuation build, comps/precedents, a "what must the buyer believe" lever or sensitivity table, and estimate triangulation. Present the tools, not the conclusion. See SKILL.md Analysis Framework for what counts as adequate vs. thin.]
+
 ## [Section 4: The Decision]
 
 [End with the open questions. What must the protagonist decide? What are the trade-offs? No resolution.]

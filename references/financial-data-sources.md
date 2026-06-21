@@ -108,21 +108,27 @@ Sources for gathering data to build HBS cases.
    - Search WSJ, Bloomberg, FT for event coverage
    - Identify key dates, players, decisions
 
-2. **Gather market data** — Build exhibits
+2. **Anchor on the primary filing** — Pull from EDGAR before relying on any secondary summary
+   - S-1 / prospectus for an IPO or debt deal; 10-K / 20-F for an operating company; DEF 14A for governance and pay; 8-K for the triggering event; merger proxy for M&A
+   - Enumerate segments, use of proceeds, TAM, risk factors, and key-person pay from the filing itself — run the SKILL.md [Primary-Document Coverage](../SKILL.md#primary-document-coverage) enumeration
+   - Note what the issuer does *not* name (often the sharpest case angle)
+
+3. **Gather market data** — Build exhibits
    - Yahoo Finance for price/volume data
    - FRED for economic context
    - SEC EDGAR for company-specific data
 
-3. **Deepen with filings** — Get the details
+4. **Deepen with filings** — Get the details
    - 10-K for business description, risk factors
    - Earnings calls for management commentary
    - 8-K for material events
 
-4. **Add academic context** — Ground in research
+5. **Add academic context** — Ground in research
    - SSRN/NBER for relevant papers
+   - For deal/valuation cases, search SSRN for a recent rigorous valuation or analysis of the same transaction; treat it as a source to engage with **and as a coverage checklist** (what segments/frameworks does it surface that your case must at least acknowledge?)
    - Cite when discussing theory or evidence
 
-5. **Document everything** — Source all exhibits
+6. **Document everything** — Source all exhibits
    - Date of access
    - URL or publication reference
    - Specific data fields used
