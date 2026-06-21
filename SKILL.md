@@ -126,19 +126,35 @@ When building a case, gather:
 
 Use web search tools to find current data. Document all sources for exhibits.
 
-## Output Format
+## Output Formats
 
-### Case Document
+The case is authored in Markdown (`.md`) as the single source of truth, then rendered into the deliverable formats the user requests. **Always ask the user which outputs they want** before generating; do not assume.
+
+### 1. Word Document (primary, default)
+Convert the authored `.md` to `.docx` using the `md-to-docx` skill (or `docx` skill for richer layout). This is the standard HBS case deliverable.
+
+- Keep the same case folder as the `.md` (e.g. `Case bank/SVB Collapse/SVB_Case.docx`)
+- Exhibits/figures embed inline after their referencing text
+- Optionally also export a `.pdf` via pandoc
+
+### 2. Beamer Teaching Slides (optional)
+On request, generate a companion LaTeX Beamer deck from the **same material** as the case. The deck is for leading the class discussion, not a re-telling — it surfaces the hook, key exhibits, and the open decision questions.
+
+- Start from [slide-template.tex](assets/slide-template.tex) (Metropolis style, compiles with `xelatex`)
+- One slide per major case section; one slide per key exhibit
+- Close with the decision questions and discussion prompts from the teaching note
+- Save as `{case_folder}/{Case_Name}_Slides.tex` and compile to PDF
+- If the user has a preferred Beamer style (e.g. the `beamer-slides-teaching` skill), match it instead
+
+**When to offer:** After the Word document is drafted, ask: "Would you also like a Beamer teaching deck from this material?" Only build it if yes — do not auto-generate.
+
+### Output Decision Flow
 ```
-[Title]
-
-[Protagonist Name] stared at [the screen/report/data]...
-
-[Background sections]
-
-[The Decision Point]
-
-Exhibits follow on separate pages.
+Case drafted (.md) + figures
+        │
+        ├── Word (.docx) ─── default, always offer
+        ├── PDF (.pdf)  ─── optional, via pandoc
+        └── Beamer (.tex → .pdf) ─── optional, ask first
 ```
 
 ### Teaching Note (Optional)
@@ -167,12 +183,52 @@ When given a financial event/product:
    - Create exhibits with sourced data
    - Write teaching note if requested
 
-4. **Review Phase**
-   - Check against HBS style principles
-   - Verify all data is sourced
-   - Ensure decision point is clear and unresolved
+4. **Output Phase**
+   - Confirm with the user which formats they want (Word default; Beamer optional)
+   - Render the `.md` to the chosen formats (see Output Formats)
+
+5. **Review & Revise Phase**
+   - Hand the drafted case to the `case-reviewer` agent (see Case Review & Revision below)
+   - The reviewer critiques the case, verifies facts and references, and returns a scored report
+   - Apply the revisions, then re-render the affected outputs
+   - One review-revise round by default; loop again if the user requests or the score is below threshold
+
+## Case Review & Revision
+
+Every drafted case goes through a review pass before it is considered final. This follows the project's worker-critic separation of powers: **the `case-reviewer` agent only critiques and verifies — it never rewrites. The HBS Case Writer applies the fixes.**
+
+### The Reviewer's Job
+The `case-reviewer` agent (`.claude/agents/case-reviewer.md`) produces a scored report against the rubric in [case-review-rubric.md](references/case-review-rubric.md). It checks:
+
+- **HBS style fidelity** — narrative voice, unresolved decision, no hindsight, exhibits carry data
+- **Fact verification** — spot-checks numbers, dates, names, and quotes against primary/credible sources via web search
+- **Reference & source integrity** — every exhibit sourced, sources resolve, no fabricated citations
+- **Pedagogical soundness** — clear decision point, conflicting information present, teaching note aligned
+
+### The Revise Loop
+```
+Drafted case (.md + exhibits)
+        │
+        ▼
+  case-reviewer → scored report (0-100) + issue list with severity
+        │
+        ├── score >= 85 and no HIGH issues → done
+        │
+        └── otherwise → HBS Case Writer applies fixes
+                │
+                ▼
+          (re-render outputs) → optional second review round
+```
+
+- Score starts at 100; deductions per the rubric
+- HIGH severity issues (fabricated facts, missing sources, broken decision point) block delivery
+- Max 2 review-revise rounds before surfacing remaining issues to the user
+- The reviewer's findings are saved alongside the case as `{Case_Name}_review.md`
 
 ## References
 
 - [hbs-patterns.md](references/hbs-patterns.md) — Detailed patterns from real HBS cases
 - [financial-data-sources.md](references/financial-data-sources.md) — Where to find financial data
+- [case-review-rubric.md](references/case-review-rubric.md) — Scoring rubric used by the `case-reviewer` agent
+- [slide-template.tex](assets/slide-template.tex) — Beamer teaching deck template
+- `case-reviewer` agent (`.claude/agents/case-reviewer.md`) — Reviews and verifies a drafted case

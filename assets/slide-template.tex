@@ -1,0 +1,204 @@
+% HBS Case Teaching Deck — companion Beamer slides
+% Compiles with:  xelatex {Case}_Slides.tex   (run twice)
+% No external theme required — uses the built-in default theme, styled cleanly,
+% so it compiles out of the box on stock MiKTeX/TeX Live. If the metropolis theme
+% is available on your machine, you may switch to it for a more modern look
+% (\usetheme[progressbar=frametitle,numbering=fraction,sectionpage=progressbar]{metropolis}).
+
+\documentclass[aspectratio=169,11pt]{beamer}
+
+% Self-contained clean theme (no external package dependency).
+\usetheme{default}
+\usecolortheme{default}
+
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{appendixnumberbeamer}
+
+% --- Palette ---
+\definecolor{accent}{HTML}{1F3A5F}      % deep navy, HBS-adjacent
+\definecolor{accentred}{HTML}{B23A48}   % for \alert emphasis
+\definecolor{softgray}{HTML}{4A4A4A}
+
+% --- Strip default chrome and bind the accent color ---
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{structure}{fg=accent}
+\setbeamercolor{frametitle}{fg=accent}
+\setbeamercolor{title}{fg=accent}
+\setbeamercolor{alerted text}{fg=accentred}
+\setbeamercolor{section in toc}{fg=accent}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamerfont{title}{series=\bfseries,size=\LARGE}
+\setbeamertemplate{itemize item}{\color{accent}\textbullet}
+\setbeamertemplate{itemize subitem}{\color{accent}\textendash}
+\setbeamersize{text margin left=10mm, text margin right=10mm}
+
+% Frametitle with an accent rule under it
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \vspace{2mm}\hspace{1mm}%
+  {\usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle}\par
+  \vspace{1mm}%
+  {\color{accent}\rule{\dimexpr\paperwidth-6mm\relax}{0.6pt}}%
+  \vspace{1mm}%
+}
+
+% Footer: short title left, page x/N right
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{\hspace{4mm}\color{softgray}\footnotesize\insertshorttitle\hfill
+        \color{softgray}\footnotesize\insertframenumber\,/\,\inserttotalframenumber\hspace{4mm}}%
+  \vspace{2mm}%
+}
+
+% Section divider page
+\setbeamertemplate{section page}{%
+  \begin{centering}
+    \vfill
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\insertsectionhead}\par
+    \vspace{2mm}{\color{accent}\rule{0.3\paperwidth}{0.6pt}}
+    \vfill
+  \end{centering}%
+}
+\AtBeginSection[]{\frame{\sectionpage}}
+
+% --- Title metadata (fill in per case) ---
+\title[Short Case Title]{[Case Title]}
+\subtitle{Teaching Deck}
+\author{[Course / Instructor]}
+\institute{Harvard Business School-style case}
+\date{[Month Year]}
+
+\begin{document}
+
+\maketitle
+
+% ============================================================
+% Slide: The Decision Moment (mirrors the case opening hook)
+% ============================================================
+\begin{frame}{The decision at hand}
+  \begin{itemize}
+    \item \textbf{Protagonist:} [Name, role, organization]
+    \item \textbf{Date:} [Month Year]
+    \item \textbf{The choice:} [one-sentence statement of the decision]
+    \item \textbf{What is at stake:} [consequences of getting it wrong]
+  \end{itemize}
+
+  \vspace{0.5em}
+  \alert{[The open question the class must wrestle with.]}
+\end{frame}
+
+% ============================================================
+% Section: Background
+% ============================================================
+\section{Background}
+
+\begin{frame}{[Industry / market context]}
+  \begin{itemize}
+    \item [Context point 1]
+    \item [Context point 2]
+    \item [Context point 3]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The protagonist}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.55\textwidth}
+      \begin{itemize}
+        \item Role and mandate
+        \item Constraints (investors, risk limits, regulation)
+        \item Why they face this decision now
+      \end{itemize}
+    \column{0.4\textwidth}
+      \small \textit{[Optional short quote or detail]}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+% Section: The Situation + Exhibits
+% ============================================================
+\section{The Situation}
+
+\begin{frame}{Key exhibit: [title]}
+  \begin{center}
+    % \includegraphics[height=0.7\textheight]{../figures/exhibit_xxx.png}
+    [Insert exhibit here: table or figure from the case]
+  \end{center}
+  \tiny \textbf{Source:} [source, date]
+\end{frame}
+
+\begin{frame}{Timeline of key events}
+  \begin{itemize}
+    \item \textbf{[Date]} --- [event]
+    \item \textbf{[Date]} --- [event]
+    \item \textbf{[Date]} --- [event]
+  \end{itemize}
+\end{frame}
+
+% ============================================================
+% Section: Analysis & The Decision
+% ============================================================
+\section{Analysis \& Decision}
+
+\begin{frame}{What to analyze}
+  Frame the analysis \emph{without} resolving it:
+  \begin{itemize}
+    \item [Framework question 1]
+    \item [Framework question 2]
+    \item [Trade-off to weigh]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The decision}
+  \begin{enumerate}
+    \item [Option A] --- [consequence]
+    \item [Option B] --- [consequence]
+    \item [Option C] --- [consequence]
+  \end{enumerate}
+
+  \vspace{0.5em}
+  \alert{What should the protagonist do, and why?}
+\end{frame}
+
+% ============================================================
+% Section: Discussion (from the teaching note)
+% ============================================================
+\section{Discussion}
+
+\begin{frame}{Discussion questions}
+  \begin{enumerate}
+    \item [Discussion question 1]
+    \item [Discussion question 2]
+    \item [Discussion question 3]
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Teaching plan (80 minutes)}
+  \begin{itemize}
+    \item \textbf{Opening (5 min)} --- cold call on the decision
+    \item \textbf{Background (15 min)} --- context and mechanics
+    \item \textbf{Analysis (25 min)} --- what happened and why
+    \item \textbf{Discussion (20 min)} --- implications
+    \item \textbf{Closing (15 min)} --- synthesis
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{}
+  \vfill
+  \begin{center}
+    {\Huge\bfseries\color{accent} What would you decide?}
+  \end{center}
+  \vfill
+\end{frame}
+
+\appendix
+
+\begin{frame}{Sources \& exhibits}
+  \footnotesize
+  \begin{itemize}
+    \item [Primary sources used in the case]
+    \item [Full source list mirrors the case's exhibit sources]
+  \end{itemize}
+\end{frame}
+
+\end{document}
