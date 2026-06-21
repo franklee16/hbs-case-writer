@@ -1,2 +1,15 @@
 __pycache__/
 *.pyc
+
+# LaTeX build artifacts (regenerate on compile)
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
