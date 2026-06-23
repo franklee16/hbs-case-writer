@@ -18,6 +18,25 @@ Every case follows this architecture:
 5. **Analysis Framework** — The apparatus the reader needs to analyze (not the analysis itself). See [Analysis Framework](#analysis-framework) below for the full specification; valuation/decision cases must carry a real framework, not just headline multiples.
 6. **The Decision** — End with open questions; NO resolution
 
+## Angle Selection (Confirm Before You Research)
+
+Every topic can become several *different* cases depending on the angle. **Ask the user which angle they want before you research or draft** (use `AskUserQuestion`), and do not default to valuation. The most common framing mistake is to collapse genuinely different case archetypes into valuation-flavored investor decisions. Offer a menu of distinct angles and let the user pick.
+
+Present these standard angles (the `Other` option is supplied automatically, so do not add one):
+
+| Angle | What the case is about | Typical protagonist | Typical framework |
+|-------|------------------------|---------------------|-------------------|
+| **Valuation** | Price a company, asset, or deal; set a target price or buy/sell/hold/underwrite call | Sell-side analyst, growth investor, banker | DCF build, comps, precedents, a "what must the buyer believe" lever table, sensitivity, triangulation |
+| **Investment decision-making** | How to act on a signal, position, or allocation, including forecasting and market-efficiency judgments | Portfolio manager, allocator, macro strategist | A decision-relevant apparatus (for example a calibration or efficiency lens, a risk-return tradeoff, portfolio impact), not necessarily a DCF |
+| **Financial product analysis** | Analyze a novel instrument's mechanics, economics, risks, and users; decide whether to use, launch, underwrite, or regulate it | Product lead, risk officer, structurer, buy-side user | How-it-works mechanics, payoff and P&L decomposition, risk scenarios, user and market fit |
+| **Industry / market background** | A primer on industry structure, competitive dynamics, or a market event as decision context | Strategist, analyst, new entrant | Structure and conduct, value chain, competitive forces, where value accrues |
+| **Corporate strategy & capital allocation** | A company facing a strategic decision (raise capital, M&A, enter or exit a market, restructure, allocate across projects) | CEO, CFO, head of corp dev, board | Strategic options matrix, capital-allocation hierarchy, deal math, scenario analysis |
+| **Risk & crisis management** | A firm under pressure making decisions in a run, blowup, or liquidity event | CEO, CRO, treasurer, risk officer | Exposure mapping, liquidity and run dynamics, stress scenarios, deciding under uncertainty |
+
+**Why this matters (worked example).** For *Polymarket*, the headline facts (a company repricing from about $1B to $15B on near-zero revenue) invite a valuation case. But the user may instead want an **investment decision-making** case on forecasting and market efficiency: whether a portfolio manager should act on prediction-market signals. These are different cases with different protagonists and different frameworks. Ask, do not assume.
+
+The angle dictates the protagonist, the framework, and the exhibits (see [Protagonist and Decision Depth](#protagonist-and-decision-depth) and [Analysis Framework](#analysis-framework)). Confirm the angle at the very start; confirm output formats later (see [Output Formats](#output-formats)).
+
 ## Writing Principles
 
 ### Narrative Style
@@ -93,7 +112,7 @@ Then run a **disclosure-economics scan**: skim the document for term-family freq
 
 ## Analysis Framework
 
-The Analysis Framework section (Case Structure item 5) is the spine of any valuation or decision case. It gives the reader the *tools* to reach a view; it does not reach the view for them. For a **valuation, capital-allocation, or buy/sell/hold** case, the framework must include, as exhibits or clearly labeled tables, as many of the following as the decision demands:
+The Analysis Framework section (Case Structure item 5) is the spine of the case. It gives the reader the *tools* to reach a view; it does not reach the view for them. **The framework must match the angle the user chose** (see [Angle Selection](#angle-selection-confirm-before-you-research)): a valuation or buy/sell/hold case carries the build below, while an investment-decision, product-analysis, industry, strategy, or risk/crisis case carries the angle-appropriate apparatus instead (for example a calibration or efficiency lens, a payoff-and-risk decomposition, or an exposure map). Whatever the angle, the framework must let a competent reader recompute a defensible answer. For a **valuation, capital-allocation, or buy/sell/hold** case, the framework must include, as exhibits or clearly labeled tables, as many of the following as the decision demands:
 
 - **A valuation build**, not just a headline multiple. A segment-level DCF (revenue path, margin path, terminal value, discount rate) or a defensible proxy (comps-derived range, precedent transactions) — with the inputs shown so the reader can flex them.
 - **Comps and precedents** — peer multiples and precedent-transaction multiples, each sourced.
@@ -178,7 +197,7 @@ Use web search tools to find current data. Document all sources for exhibits.
 
 ## Output Formats
 
-The case is authored in Markdown (`.md`) as the single source of truth, then rendered into the deliverable formats the user requests. **Always ask the user which outputs they want** before generating; do not assume.
+The case is authored in Markdown (`.md`) as the single source of truth, then rendered into the deliverable formats the user requests. **Confirm two things with the user, in this order: (1) the angle** ([Angle Selection](#angle-selection-confirm-before-you-research), asked first), **and (2) the output formats** (asked before generating; do not assume).
 
 ### 1. Word Document (primary, default)
 Convert the authored `.md` to `.docx` using the `md-to-docx` skill (or `docx` skill for richer layout). This is the standard HBS case deliverable.
@@ -218,6 +237,8 @@ Create when the case is complete:
 
 When given a financial event/product:
 
+0. **Angle Selection (ask first):** Before researching, ask the user which angle to pursue, using the taxonomy in [Angle Selection](#angle-selection-confirm-before-you-research). Do not default to valuation, and do not collapse the options into valuation-flavored investor decisions. The angle dictates the protagonist, framework, and exhibits. Confirm the output formats at the same time or immediately after (see [Output Formats](#output-formats)).
+
 1. **Research Phase**
    1. **Orient with news** — Understand the narrative, the players, the key dates. (Secondary sources only; do not anchor here.)
    2. **Anchor on the primary document** — Read the S-1 / 10-K / proxy / 8-K and run the [Primary-Document Coverage](#primary-document-coverage) enumeration (segments, TAM, use of proceeds, risk factors, comp/award structure, related parties, share-count basis).
@@ -226,7 +247,7 @@ When given a financial event/product:
       - *Repricing-of-risk framing*: is the market debate really about cash flows, or about the price of risk / the discount rate?
       - *Optionality*: is most of the value in contingent, milestone-gated upside rather than the base business?
       - *Flow vs. fundamental*: is the price being set by mechanical flows (index inclusion, seasoning rules) rather than by views?
-   4. **Choose the protagonist and decision to fit the angle** — Pick a role whose job demands the analysis the angle requires (see [Protagonist and Decision Depth](#protagonist-and-decision-depth)). The angle should dictate the protagonist, not the other way around.
+   4. **Choose the protagonist and decision to fit the angle:** Honor the angle the user confirmed in Phase 0. Pick a role whose job demands the analysis the angle requires (see [Protagonist and Decision Depth](#protagonist-and-decision-depth)). The angle should dictate the protagonist, not the other way around.
    5. **Gather market data and academic context** — Prices, comps, precedents, and any rigorous secondary analysis (working papers, valuation decks). A rigorous *external* analysis is a source to engage with, not a template to copy — use it to pressure-test your own framework and as a coverage checklist (what segments/frameworks does it surface that your case must at least acknowledge?).
 
 2. **Outline Phase**
