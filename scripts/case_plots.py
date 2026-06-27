@@ -59,7 +59,8 @@ def plot_time_series(
     color: str = '#1f77b4',
     annotate_points: List[dict] = None,
     show_values: bool = False,
-    date_format: str = '%b %Y'
+    date_format: str = '%b %Y',
+    y_start_zero: bool = False
 ) -> str:
     """
     Plot a time series with professional styling.
@@ -75,6 +76,8 @@ def plot_time_series(
         annotate_points: List of dicts with 'date', 'value', 'text' for annotations
         show_values: Whether to show values at each point
         date_format: Date format for x-axis
+        y_start_zero: Force the y-axis to start at 0 (default False; leave
+            False for prices/rates/spreads so autoscale preserves resolution)
 
     Returns:
         Path to saved figure
@@ -104,7 +107,8 @@ def plot_time_series(
     ax.xaxis.set_major_formatter(mdates.DateFormatter(date_format))
     fig.autofmt_xdate()
 
-    ax.set_ylim(bottom=0)
+    if y_start_zero:
+        ax.set_ylim(bottom=0)
 
     return save_figure(fig, filename, output_dir)
 
@@ -377,7 +381,7 @@ def plot_comparison_bars(
 if __name__ == '__main__':
     import os
 
-    output_dir = 'c:/Users/weikaili/Dropbox/My Documents/HBS Cases/SVB Collapse/figures'
+    output_dir = os.path.join(os.path.dirname(__file__), '..', 'examples', 'svb-collapse', 'figures')
     os.makedirs(output_dir, exist_ok=True)
 
     # Figure 1: SVB Deposit Growth
