@@ -8,35 +8,57 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
 import numpy as np
+from contextlib import contextmanager
 from datetime import datetime
 from typing import List, Tuple, Optional
 import os
 
 
+_HBS_BASE_STYLE = 'seaborn-v0_8-whitegrid'
+
+_HBS_RC = {
+    'figure.figsize': (10, 6),
+    'figure.dpi': 150,
+    'font.family': 'sans-serif',
+    'font.size': 11,
+    'axes.labelsize': 12,
+    'axes.titlesize': 14,
+    'axes.titleweight': 'bold',
+    'axes.labelweight': 'bold',
+    'xtick.labelsize': 10,
+    'ytick.labelsize': 10,
+    'legend.fontsize': 10,
+    'legend.frameon': True,
+    'legend.framealpha': 0.9,
+    'axes.spines.top': False,
+    'axes.spines.right': False,
+    'figure.facecolor': 'white',
+    'axes.facecolor': 'white',
+    'grid.color': '#E5E5E5',
+    'grid.linewidth': 0.5,
+}
+
+
+@contextmanager
+def hbs_style_context():
+    """Apply HBS figure styling for the duration of the block, then restore
+    the caller's rcParams on exit. Prevents the HBS style from leaking into
+    surrounding plots in a shared session (e.g. a Jupyter notebook).
+    """
+    with plt.style.context(_HBS_BASE_STYLE):
+        with plt.rc_context(_HBS_RC):
+            yield
+
+
 def setup_style():
-    """Set up professional figure style for HBS cases."""
-    plt.style.use('seaborn-v0_8-whitegrid')
-    plt.rcParams.update({
-        'figure.figsize': (10, 6),
-        'figure.dpi': 150,
-        'font.family': 'sans-serif',
-        'font.size': 11,
-        'axes.labelsize': 12,
-        'axes.titlesize': 14,
-        'axes.titleweight': 'bold',
-        'axes.labelweight': 'bold',
-        'xtick.labelsize': 10,
-        'ytick.labelsize': 10,
-        'legend.fontsize': 10,
-        'legend.frameon': True,
-        'legend.framealpha': 0.9,
-        'axes.spines.top': False,
-        'axes.spines.right': False,
-        'figure.facecolor': 'white',
-        'axes.facecolor': 'white',
-        'grid.color': '#E5E5E5',
-        'grid.linewidth': 0.5,
-    })
+    """Set up professional figure style for HBS cases.
+
+    Mutates global matplotlib rcParams. Kept for backward compatibility with
+    external callers; the plot functions below use ``hbs_style_context()``
+    instead so styling is scoped and does not leak.
+    """
+    plt.style.use(_HBS_BASE_STYLE)
+    plt.rcParams.update(_HBS_RC)
 
 
 def save_figure(fig, filename: str, output_dir: str = '.', dpi: int = 300):
@@ -82,35 +104,34 @@ def plot_time_series(
     Returns:
         Path to saved figure
     """
-    setup_style()
+    with hbs_style_context():
+        fig, ax = plt.subplots(figsize=(10, 6))
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(dates, values, color=color, linewidth=2, marker='o', markersize=5)
 
-    ax.plot(dates, values, color=color, linewidth=2, marker='o', markersize=5)
+        if show_values:
+            for d, v in zip(dates, values):
+                ax.annotate(f'{v:,.0f}', (d, v), textcoords="offset points",
+                           xytext=(0, 10), ha='center', fontsize=9)
 
-    if show_values:
-        for d, v in zip(dates, values):
-            ax.annotate(f'{v:,.0f}', (d, v), textcoords="offset points",
-                       xytext=(0, 10), ha='center', fontsize=9)
+        if annotate_points:
+            for ann in annotate_points:
+                ax.annotate(ann['text'], (ann['date'], ann['value']),
+                           textcoords="offset points", xytext=ann.get('offset', (0, 15)),
+                           ha='center', fontsize=9,
+                           arrowprops=dict(arrowstyle='->', color='gray', lw=0.5))
 
-    if annotate_points:
-        for ann in annotate_points:
-            ax.annotate(ann['text'], (ann['date'], ann['value']),
-                       textcoords="offset points", xytext=ann.get('offset', (0, 15)),
-                       ha='center', fontsize=9,
-                       arrowprops=dict(arrowstyle='->', color='gray', lw=0.5))
+        ax.set_title(title, fontweight='bold', fontsize=14)
+        ax.set_ylabel(ylabel)
+        ax.set_xlabel('')
 
-    ax.set_title(title, fontweight='bold', fontsize=14)
-    ax.set_ylabel(ylabel)
-    ax.set_xlabel('')
+        ax.xaxis.set_major_formatter(mdates.DateFormatter(date_format))
+        fig.autofmt_xdate()
 
-    ax.xaxis.set_major_formatter(mdates.DateFormatter(date_format))
-    fig.autofmt_xdate()
+        if y_start_zero:
+            ax.set_ylim(bottom=0)
 
-    if y_start_zero:
-        ax.set_ylim(bottom=0)
-
-    return save_figure(fig, filename, output_dir)
+        return save_figure(fig, filename, output_dir)
 
 
 def plot_bar_chart(
@@ -143,40 +164,39 @@ def plot_bar_chart(
     Returns:
         Path to saved figure
     """
-    setup_style()
+    with hbs_style_context():
+        fig, ax = plt.subplots(figsize=(10, 6))
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+        if colors is None:
+            colors = ['#1f77b4'] * len(categories)
 
-    if colors is None:
-        colors = ['#1f77b4'] * len(categories)
+        x = np.arange(len(categories))
 
-    x = np.arange(len(categories))
+        if horizontal:
+            bars = ax.barh(x, values, color=colors)
+            ax.set_yticks(x)
+            ax.set_yticklabels(categories)
+            ax.set_xlabel(ylabel)
+            ax.invert_yaxis()
 
-    if horizontal:
-        bars = ax.barh(x, values, color=colors)
-        ax.set_yticks(x)
-        ax.set_yticklabels(categories)
-        ax.set_xlabel(ylabel)
-        ax.invert_yaxis()
+            if show_values:
+                for bar, val in zip(bars, values):
+                    ax.text(bar.get_width() + 0.01 * max(values), bar.get_y() + bar.get_height()/2,
+                           value_format.format(val), va='center', fontsize=10)
+        else:
+            bars = ax.bar(x, values, color=colors)
+            ax.set_xticks(x)
+            ax.set_xticklabels(categories, rotation=45, ha='right')
+            ax.set_ylabel(ylabel)
 
-        if show_values:
-            for bar, val in zip(bars, values):
-                ax.text(bar.get_width() + 0.01 * max(values), bar.get_y() + bar.get_height()/2,
-                       value_format.format(val), va='center', fontsize=10)
-    else:
-        bars = ax.bar(x, values, color=colors)
-        ax.set_xticks(x)
-        ax.set_xticklabels(categories, rotation=45, ha='right')
-        ax.set_ylabel(ylabel)
+            if show_values:
+                for bar, val in zip(bars, values):
+                    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01 * max(values),
+                           value_format.format(val), ha='center', fontsize=10)
 
-        if show_values:
-            for bar, val in zip(bars, values):
-                ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01 * max(values),
-                       value_format.format(val), ha='center', fontsize=10)
+        ax.set_title(title, fontweight='bold', fontsize=14)
 
-    ax.set_title(title, fontweight='bold', fontsize=14)
-
-    return save_figure(fig, filename, output_dir)
+        return save_figure(fig, filename, output_dir)
 
 
 def plot_stacked_bar(
@@ -203,27 +223,26 @@ def plot_stacked_bar(
     Returns:
         Path to saved figure
     """
-    setup_style()
+    with hbs_style_context():
+        fig, ax = plt.subplots(figsize=(10, 6))
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+        x = np.arange(len(categories))
+        bottom = np.zeros(len(categories))
 
-    x = np.arange(len(categories))
-    bottom = np.zeros(len(categories))
+        for s in series:
+            ax.bar(x, s['values'], bottom=bottom, label=s['name'],
+                   color=s.get('color', '#1f77b4'))
+            bottom += np.array(s['values'])
 
-    for s in series:
-        ax.bar(x, s['values'], bottom=bottom, label=s['name'],
-               color=s.get('color', '#1f77b4'))
-        bottom += np.array(s['values'])
+        ax.set_xticks(x)
+        ax.set_xticklabels(categories, rotation=45, ha='right')
+        ax.set_ylabel(ylabel)
+        ax.set_title(title, fontweight='bold', fontsize=14)
 
-    ax.set_xticks(x)
-    ax.set_xticklabels(categories, rotation=45, ha='right')
-    ax.set_ylabel(ylabel)
-    ax.set_title(title, fontweight='bold', fontsize=14)
+        if show_legend:
+            ax.legend(loc='upper right', frameon=True)
 
-    if show_legend:
-        ax.legend(loc='upper right', frameon=True)
-
-    return save_figure(fig, filename, output_dir)
+        return save_figure(fig, filename, output_dir)
 
 
 def plot_pie_chart(
@@ -250,27 +269,26 @@ def plot_pie_chart(
     Returns:
         Path to saved figure
     """
-    setup_style()
+    with hbs_style_context():
+        fig, ax = plt.subplots(figsize=(8, 8))
 
-    fig, ax = plt.subplots(figsize=(8, 8))
+        if colors is None:
+            colors = plt.cm.Set2.colors[:len(labels)]
 
-    if colors is None:
-        colors = plt.cm.Set2.colors[:len(labels)]
+        wedges, texts, autotexts = ax.pie(
+            values, labels=labels, colors=colors,
+            autopct='%1.1f%%' if show_percentages else None,
+            startangle=90, pctdistance=0.75
+        )
 
-    wedges, texts, autotexts = ax.pie(
-        values, labels=labels, colors=colors,
-        autopct='%1.1f%%' if show_percentages else None,
-        startangle=90, pctdistance=0.75
-    )
+        if show_percentages:
+            for autotext in autotexts:
+                autotext.set_fontsize(10)
+                autotext.set_fontweight('bold')
 
-    if show_percentages:
-        for autotext in autotexts:
-            autotext.set_fontsize(10)
-            autotext.set_fontweight('bold')
+        ax.set_title(title, fontweight='bold', fontsize=14)
 
-    ax.set_title(title, fontweight='bold', fontsize=14)
-
-    return save_figure(fig, filename, output_dir)
+        return save_figure(fig, filename, output_dir)
 
 
 def plot_dual_axis(
@@ -307,30 +325,29 @@ def plot_dual_axis(
     Returns:
         Path to saved figure
     """
-    setup_style()
+    with hbs_style_context():
+        fig, ax1 = plt.subplots(figsize=(10, 6))
 
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+        ax1.plot(dates, values1, color=color1, linewidth=2, marker='o', markersize=5, label=label1)
+        ax1.set_ylabel(ylabel1, color=color1)
+        ax1.tick_params(axis='y', labelcolor=color1)
+        ax1.set_xlabel('')
 
-    ax1.plot(dates, values1, color=color1, linewidth=2, marker='o', markersize=5, label=label1)
-    ax1.set_ylabel(ylabel1, color=color1)
-    ax1.tick_params(axis='y', labelcolor=color1)
-    ax1.set_xlabel('')
+        ax2 = ax1.twinx()
+        ax2.plot(dates, values2, color=color2, linewidth=2, marker='s', markersize=5, label=label2)
+        ax2.set_ylabel(ylabel2, color=color2)
+        ax2.tick_params(axis='y', labelcolor=color2)
 
-    ax2 = ax1.twinx()
-    ax2.plot(dates, values2, color=color2, linewidth=2, marker='s', markersize=5, label=label2)
-    ax2.set_ylabel(ylabel2, color=color2)
-    ax2.tick_params(axis='y', labelcolor=color2)
+        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+        fig.autofmt_xdate()
 
-    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
-    fig.autofmt_xdate()
+        ax1.set_title(title, fontweight='bold', fontsize=14)
 
-    ax1.set_title(title, fontweight='bold', fontsize=14)
+        lines1, labels1 = ax1.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
 
-    lines1, labels1 = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
-
-    return save_figure(fig, filename, output_dir)
+        return save_figure(fig, filename, output_dir)
 
 
 def plot_comparison_bars(
@@ -357,24 +374,23 @@ def plot_comparison_bars(
     Returns:
         Path to saved figure
     """
-    setup_style()
+    with hbs_style_context():
+        fig, ax = plt.subplots(figsize=(10, 6))
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+        x = np.arange(len(categories))
 
-    x = np.arange(len(categories))
+        for i, s in enumerate(series):
+            offset = (i - len(series)/2 + 0.5) * bar_width
+            ax.bar(x + offset, s['values'], bar_width,
+                   label=s['name'], color=s.get('color', plt.cm.Set2.colors[i]))
 
-    for i, s in enumerate(series):
-        offset = (i - len(series)/2 + 0.5) * bar_width
-        ax.bar(x + offset, s['values'], bar_width,
-               label=s['name'], color=s.get('color', plt.cm.Set2.colors[i]))
+        ax.set_xticks(x)
+        ax.set_xticklabels(categories, rotation=45, ha='right')
+        ax.set_ylabel(ylabel)
+        ax.set_title(title, fontweight='bold', fontsize=14)
+        ax.legend(loc='upper right', frameon=True)
 
-    ax.set_xticks(x)
-    ax.set_xticklabels(categories, rotation=45, ha='right')
-    ax.set_ylabel(ylabel)
-    ax.set_title(title, fontweight='bold', fontsize=14)
-    ax.legend(loc='upper right', frameon=True)
-
-    return save_figure(fig, filename, output_dir)
+        return save_figure(fig, filename, output_dir)
 
 
 # Example usage for SVB case
